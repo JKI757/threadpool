@@ -12,16 +12,20 @@
 #include <thread>
 #include <mutex>
 #include <queue>
+#include <memory>
+#include "dataClass.hpp"
 
 
 class ThreadPool{
 public:
     void Start();
-    void QueueJob(const std::function<void()>& job);
+    void QueueJob(const std::shared_ptr<dataClass> d, int data);
     void Stop();
     bool isBusy();
     uint64_t getJobId();
     void setJobId(uint64_t id);
+    
+    void kill();
     
     
     
@@ -35,7 +39,7 @@ private:
     std::mutex queueMutex;
     std::condition_variable mutex_condition;
     std::vector<std::thread> threads;
-    std::queue<std::function<void()>> jobs;
+    std::queue<std::shared_ptr<dataClass>> jobs;
     
 };
 

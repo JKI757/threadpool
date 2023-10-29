@@ -8,7 +8,7 @@
 #include "ThreadPool.hpp"
 
 void ThreadPool::Start(){
-    const uint32_t numThreads = std::thread::hardware_concurrency();
+    const uint32_t numThreads = std::thread::hardware_concurrency()/4; //max threads machine can handle.
     for (uint32_t ii = 0; ii < numThreads; ++ii){
         threads.emplace_back(std::thread(&ThreadPool::ThreadLoop, this));
     }
@@ -16,7 +16,7 @@ void ThreadPool::Start(){
 
 void ThreadPool::ThreadLoop(){
     while(true){
-        std::function<void()> job;
+        std::shared_ptr<dataClass> job;
         {
             std::unique_lock<std::mutex> lock(queueMutex);
             mutex_condition.wait(lock, [this]{
@@ -27,15 +27,17 @@ void ThreadPool::ThreadLoop(){
             }
             job = jobs.front();
             jobs.pop();
+            job->printSomething();
+
         }
-        job();
     }
 }
 
 
-void ThreadPool::QueueJob(const std::function<void()>& job){
+void ThreadPool::QueueJob(const std::shared_ptr<dataClass> job, int data){
     {
         std::unique_lock<std::mutex> lock(queueMutex);
+        job->setData(data);
         jobs.push(job);
     }
     mutex_condition.notify_one();
@@ -61,4 +63,9 @@ void ThreadPool::Stop(){
         activeThread.join();
     }
     threads.clear();
+}
+
+
+void ThreadPool::kill(){
+    this->should_terminate = true;
 }

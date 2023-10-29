@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		03232BD52AEB45AF00E65CB0 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03232BD42AEB45AF00E65CB0 /* main.cpp */; };
 		03232BDD2AEB45E900E65CB0 /* ThreadPool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03232BDB2AEB45E900E65CB0 /* ThreadPool.cpp */; };
+		03232BE02AECC14600E65CB0 /* dataClass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03232BDE2AECC14600E65CB0 /* dataClass.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -28,6 +29,8 @@
 		03232BD42AEB45AF00E65CB0 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		03232BDB2AEB45E900E65CB0 /* ThreadPool.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadPool.cpp; sourceTree = "<group>"; };
 		03232BDC2AEB45E900E65CB0 /* ThreadPool.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ThreadPool.hpp; sourceTree = "<group>"; };
+		03232BDE2AECC14600E65CB0 /* dataClass.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = dataClass.cpp; sourceTree = "<group>"; };
+		03232BDF2AECC14600E65CB0 /* dataClass.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = dataClass.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,6 +63,8 @@
 		03232BD32AEB45AF00E65CB0 /* threadPool */ = {
 			isa = PBXGroup;
 			children = (
+				03232BDE2AECC14600E65CB0 /* dataClass.cpp */,
+				03232BDF2AECC14600E65CB0 /* dataClass.hpp */,
 				03232BD42AEB45AF00E65CB0 /* main.cpp */,
 				03232BDB2AEB45E900E65CB0 /* ThreadPool.cpp */,
 				03232BDC2AEB45E900E65CB0 /* ThreadPool.hpp */,
@@ -124,6 +129,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				03232BE02AECC14600E65CB0 /* dataClass.cpp in Sources */,
 				03232BD52AEB45AF00E65CB0 /* main.cpp in Sources */,
 				03232BDD2AEB45E900E65CB0 /* ThreadPool.cpp in Sources */,
 			);
