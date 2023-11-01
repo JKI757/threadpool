@@ -8,7 +8,7 @@
 #include <iostream>
 #include "ThreadPool.hpp"
 #include <unistd.h>
-
+#include <sstream>
 
 
 void printSomething(int i){
@@ -21,8 +21,14 @@ int main(int argc, const char * argv[]) {
     std::function<void(int i)> func = printSomething;
     for(int ii=0; ii < 5000; ++ii){
         usleep(2000);
-        std::shared_ptr<dataClass> job = std::make_unique<dataClass> (ii);
-        n.QueueJob(job, ii);
+        jobVariant job = IntJob(ii);
+        jobVariantPtr jobPtr = std::make_shared<jobVariant>(job);
+        n.QueueJob(jobPtr);
+        std::stringstream s;
+        s << "the number is: " << ii << std::endl;
+        job = StringJob(s.str());
+        jobPtr = std::make_shared<jobVariant>(job);
+        n.QueueJob(jobPtr);
         
     }
     while(n.isBusy()){;}

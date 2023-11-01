@@ -16,7 +16,7 @@ void ThreadPool::Start(){
 
 void ThreadPool::ThreadLoop(){
     while(true){
-        std::shared_ptr<dataClass> job;
+        jobVariantPtr thisJob;
         {
             std::unique_lock<std::mutex> lock(queueMutex);
             mutex_condition.wait(lock, [this]{
@@ -25,20 +25,18 @@ void ThreadPool::ThreadLoop(){
             if (should_terminate){
                 return;
             }
-            job = jobs.front();
+            thisJob = jobs.front();
             jobs.pop();
-            job->printSomething();
-
+            std::visit([](auto& job) { job.doWork(); }, *(thisJob));
         }
     }
 }
 
 
-void ThreadPool::QueueJob(const std::shared_ptr<dataClass> job, int data){
+void ThreadPool::QueueJob(jobVariantPtr jobPtr){
     {
         std::unique_lock<std::mutex> lock(queueMutex);
-        job->setData(data);
-        jobs.push(job);
+        jobs.push(jobPtr);
     }
     mutex_condition.notify_one();
 }//to use: thread_pool->QueueJob([] { /* ... */ });
