@@ -10,7 +10,7 @@
 #include "JobClass.hpp"
 #include <iostream>
 
-class StringJob : public Job {
+class StringJob : public JobClass {
 public:
     StringJob(const std::string& data) : data(data) {}
 

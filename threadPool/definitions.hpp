@@ -8,15 +8,11 @@
 #ifndef definitions_h
 #define definitions_h
 
-#include <variant>
 #include <memory>
 #include "JobClass.hpp"
-#include "StringJob.hpp"
-#include "IntJob.hpp"
 
-typedef std::variant<IntJob, StringJob> jobVariant;
 
-typedef  std::shared_ptr<jobVariant> jobVariantPtr;
+typedef  std::shared_ptr<JobClass> jobVariantPtr;
 
 
 #endif /* definitions_h */

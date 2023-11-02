@@ -7,29 +7,27 @@
 
 #include <iostream>
 #include "ThreadPool.hpp"
+#include "StringJob.hpp"
+#include "IntJob.hpp"
+#include "JobClass.hpp"
+#include "definitions.hpp"
 #include <unistd.h>
 #include <sstream>
 
 
-void printSomething(int i){
-    std::cout << "I'm printing!!" << i << std::endl;
-}
 int main(int argc, const char * argv[]) {
     // insert code here...
     ThreadPool n;
     n.Start();
-    std::function<void(int i)> func = printSomething;
     for(int ii=0; ii < 5000; ++ii){
         usleep(2000);
-        jobVariant job = IntJob(ii);
-        jobVariantPtr jobPtr = std::make_shared<jobVariant>(job);
-        n.QueueJob(jobPtr);
+        jobVariantPtr job = std::dynamic_pointer_cast<JobClass> (std::make_shared<IntJob> (ii));
+        n.QueueJob(job);
         std::stringstream s;
-        s << "the number is: " << ii << std::endl;
-        job = StringJob(s.str());
-        jobPtr = std::make_shared<jobVariant>(job);
-        n.QueueJob(jobPtr);
-        
+        s << "the number is: " << ii;
+        job = std::dynamic_pointer_cast<JobClass> (std::make_shared<StringJob> (s.str()));
+        n.QueueJob(job);
+
     }
     while(n.isBusy()){;}
     n.Stop();

@@ -9,7 +9,7 @@
 #define IntJob_h
 #include <iostream>
 
-class IntJob : public Job {
+class IntJob : public JobClass {
 public:
     IntJob(int data) : data(data) {}
 

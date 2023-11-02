@@ -10,10 +10,10 @@
 
 
 // Base class for the Job class hierarchy
-class Job {
+class JobClass {
 public:
     virtual void doWork() = 0;
-    virtual ~Job() = default;
+    virtual ~JobClass() = default;
 };
 
 #endif /* JobClass_h */
