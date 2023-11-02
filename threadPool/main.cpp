@@ -19,7 +19,7 @@ int main(int argc, const char * argv[]) {
     // insert code here...
     ThreadPool n;
     n.Start();
-    for(int ii=0; ii < 5000; ++ii){
+    for(int ii=0; ii < 100; ++ii){
         usleep(2000);
         jobVariantPtr job = std::dynamic_pointer_cast<JobClass> (std::make_shared<IntJob> (ii));
         n.QueueJob(job);
