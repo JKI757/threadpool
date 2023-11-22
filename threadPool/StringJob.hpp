@@ -12,8 +12,7 @@
 
 class StringJob : public JobClass {
 public:
-    StringJob(const std::string& data) : data(data) {}
-
+    StringJob(const std::string& data, Globals& global) : JobClass(global), data(data) {}
     void doWork() override {
         // Perform operations specific to StringJob
         std::cout << "Processing StringJob with data: " << data << std::endl;

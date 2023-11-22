@@ -13,19 +13,20 @@
 #include "definitions.hpp"
 #include <unistd.h>
 #include <sstream>
-
+#include "Globals.hpp"
 
 int main(int argc, const char * argv[]) {
     // insert code here...
     ThreadPool n;
+    Globals global;
     n.Start();
     for(int ii=0; ii < 100; ++ii){
         usleep(2000);
-        jobVariantPtr job = std::dynamic_pointer_cast<JobClass> (std::make_shared<IntJob> (ii));
+        jobVariantPtr job = std::dynamic_pointer_cast<JobClass> ( std::make_shared<IntJob> (ii, global));
         n.QueueJob(job);
         std::stringstream s;
         s << "the number is: " << ii;
-        job = std::dynamic_pointer_cast<JobClass> (std::make_shared<StringJob> (s.str()));
+        job = std::dynamic_pointer_cast<JobClass> (std::make_shared<StringJob> (s.str(), global));
         n.QueueJob(job);
 
     }

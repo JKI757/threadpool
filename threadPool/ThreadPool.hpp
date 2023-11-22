@@ -1,123 +1,119 @@
-// ThreadPoolAsync.hpp
-// threadPool using std::async
+// ThreadPool.hpp
 //
-// Created by josh on 10/26/23.
+// ThreadPool using std::thread and std::mutex
+//
+// Created on 10/26/23.
 
-#ifndef ThreadPoolAsync_hpp
-#define ThreadPoolAsync_hpp
+#ifndef ThreadPool_hpp
+#define ThreadPool_hpp
 
-#include <future>
 #include <vector>
 #include <queue>
 #include <memory>
 #include <atomic>
-#include <pthread.h>
+#include <mutex>
+#include <condition_variable>
+#include <thread>
 
 #include "definitions.hpp"
 #include "JobClass.hpp"
 #include "StringJob.hpp"
 #include "IntJob.hpp"
 
-
 class ThreadPool {
 public:
     ThreadPool();
+    explicit ThreadPool(size_t threads);
+    ~ThreadPool();
     void Start();
     void QueueJob(jobVariantPtr job);
     void Stop();
     bool isBusy();
-    void kill();
-
-    ~ThreadPool();
-    static void* ThreadLoopEntry(void* arg) {
-        ThreadPool* pool = static_cast<ThreadPool*>(arg);
-        pool->ThreadLoop();
-        return NULL;
-    }
 
 private:
     bool should_terminate = false;
-    pthread_mutex_t queueMutex;
+    std::mutex queueMutex;
+    std::condition_variable condition;
     std::queue<jobVariantPtr> jobs;
-    std::vector<std::future<void>> futures;
-    std::atomic<int> activeJobs{0};  // Initialized to 0
-    pthread_t mainThread;
+    std::vector<std::thread> workers;
+    std::atomic<int> activeJobs{0};
 
-    void ThreadLoop();
+    void WorkerThread();
+    void InitializeThreads(size_t threads);
+
 };
 
-// Function definitions
-ThreadPool::ThreadPool(){
-    pthread_mutex_init(&queueMutex, NULL);
-}
-ThreadPool::~ThreadPool(){
-    pthread_mutex_destroy(&queueMutex);
+// Default constructor that initializes threads to the hardware concurrency limit
+ThreadPool::ThreadPool() : ThreadPool(std::thread::hardware_concurrency()) {}
 
+// Constructor that allows specifying a number of threads
+ThreadPool::ThreadPool(size_t threads) {
+    InitializeThreads(threads);
 }
+
+void ThreadPool::InitializeThreads(size_t threads) {
+    auto max_threads = std::thread::hardware_concurrency();
+    if (threads > max_threads) {
+        throw std::invalid_argument("Number of threads requested exceeds hardware concurrency limit.");
+    }
+
+    for (size_t i = 0; i < threads; ++i) {
+        workers.emplace_back(&ThreadPool::WorkerThread, this);
+    }
+}
+
+ThreadPool::~ThreadPool() {
+    Stop();
+}
+
 void ThreadPool::Start() {
-    // Start the main thread loop
-    pthread_create(&mainThread, NULL, ThreadPool::ThreadLoopEntry, this);
-    pthread_detach(mainThread);  // Detach the thread
+    // All threads are started in the constructor
 }
 
-void ThreadPool::ThreadLoop() {
+void ThreadPool::WorkerThread() {
     while (true) {
-        jobVariantPtr thisJob;
+        jobVariantPtr job;
         {
-            if (should_terminate) {
-                std::cout << "Terminating ThreadLoop" << std::endl;
+            std::unique_lock<std::mutex> lock(queueMutex);
+            condition.wait(lock, [this]() {
+                return should_terminate || !jobs.empty();
+            });
+            if (should_terminate && jobs.empty()) {
                 return;
             }
-            
-            pthread_mutex_lock(&queueMutex);
-            bool jobsAvail = !jobs.empty();
-            pthread_mutex_unlock(&queueMutex);
-            if (jobsAvail) {
-                pthread_mutex_lock(&queueMutex);
-                thisJob = jobs.front();
-                jobs.pop();
-                pthread_mutex_unlock(&queueMutex);
-//                std::cout << "Popped a job from the queue" << std::endl;
-            } else {
-//                std::cout << "No jobs in the queue" << std::endl;
-                continue;
-            }
-            
+            job = std::move(jobs.front());
+            jobs.pop();
         }
         ++activeJobs;
-        futures.push_back(std::async(std::launch::async, [this, thisJob] {
-//            std::cout << "Processing a job" << std::endl;
-            thisJob->doWork();
-            --activeJobs;
-        }));
+        job->doWork();
+        --activeJobs;
     }
 }
 
 void ThreadPool::QueueJob(jobVariantPtr jobPtr) {
-    pthread_mutex_lock(&queueMutex);
-    jobs.push(jobPtr);
-    pthread_mutex_unlock(&queueMutex);
-
+    {
+        std::lock_guard<std::mutex> lock(queueMutex);
+        jobs.push(std::move(jobPtr));
+    }
+    condition.notify_one();
 }
 
 bool ThreadPool::isBusy() {
-    pthread_mutex_lock(&queueMutex);
-    bool ret = !jobs.empty() || activeJobs > 0;
-    pthread_mutex_unlock(&queueMutex);
-
-    return ret;
-    
+    std::lock_guard<std::mutex> lock(queueMutex);
+    return !jobs.empty() || activeJobs > 0;
 }
 
 void ThreadPool::Stop() {
-    should_terminate = true;
-    for (auto &future : futures) {
-        future.get();
+    {
+        std::lock_guard<std::mutex> lock(queueMutex);
+        should_terminate = true;
+    }
+    condition.notify_all();
+    for (std::thread &worker : workers) {
+        if (worker.joinable()) {
+            worker.join();
+        }
     }
 }
 
-void ThreadPool::kill() {
-    should_terminate = true;
-}
-
-#endif /* ThreadPoolAsync_hpp */
+#endif /* ThreadPool_hpp */

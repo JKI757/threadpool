@@ -11,7 +11,7 @@
 
 class IntJob : public JobClass {
 public:
-    IntJob(int data) : data(data) {}
+    IntJob(const int& data, Globals& global) : JobClass(global), data(data) {}
 
     void doWork() override {
         // Perform operations specific to IntJob

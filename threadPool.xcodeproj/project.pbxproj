@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		03232BD52AEB45AF00E65CB0 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03232BD42AEB45AF00E65CB0 /* main.cpp */; };
+		035F187C2AFC761300FFA4C7 /* Globals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 035F187A2AFC761300FFA4C7 /* Globals.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -30,6 +31,9 @@
 		035F18772AF1E1F300FFA4C7 /* StringJob.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = StringJob.hpp; sourceTree = "<group>"; };
 		035F18782AF1E22800FFA4C7 /* IntJob.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = IntJob.hpp; sourceTree = "<group>"; };
 		035F18792AF1E2A800FFA4C7 /* definitions.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = definitions.hpp; sourceTree = "<group>"; };
+		035F187A2AFC761300FFA4C7 /* Globals.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Globals.cpp; sourceTree = "<group>"; };
+		035F187B2AFC761300FFA4C7 /* Globals.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Globals.hpp; sourceTree = "<group>"; };
+		035F187D2AFC765300FFA4C7 /* data.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = data.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -68,6 +72,9 @@
 				035F18772AF1E1F300FFA4C7 /* StringJob.hpp */,
 				035F18782AF1E22800FFA4C7 /* IntJob.hpp */,
 				035F18792AF1E2A800FFA4C7 /* definitions.hpp */,
+				035F187A2AFC761300FFA4C7 /* Globals.cpp */,
+				035F187B2AFC761300FFA4C7 /* Globals.hpp */,
+				035F187D2AFC765300FFA4C7 /* data.h */,
 			);
 			path = threadPool;
 			sourceTree = "<group>";
@@ -129,6 +136,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				035F187C2AFC761300FFA4C7 /* Globals.cpp in Sources */,
 				03232BD52AEB45AF00E65CB0 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -254,6 +262,7 @@
 		03232BD92AEB45AF00E65CB0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 4ASTQP4ERL;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -264,6 +273,7 @@
 		03232BDA2AEB45AF00E65CB0 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 4ASTQP4ERL;
 				ENABLE_HARDENED_RUNTIME = YES;
